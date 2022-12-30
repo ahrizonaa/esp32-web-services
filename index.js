@@ -18,7 +18,7 @@ wss.on('connection', function (ws) {
   console.log('new conneciton established')
   ws.on('message', function(msgStr) {
     //const msg = JSON.parse(msgStr)
-    console.log(msgStr)
+    console.log(msgStr.toString())
   })
 
   ws.on('close', function () {
