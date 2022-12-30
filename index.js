@@ -15,8 +15,8 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', function (ws) {
   console.log('new conneciton established')
   ws.on('message', function(msgStr) {
-    const msg = JSON.parse(msgStr)
-    console.log(msg)
+    //const msg = JSON.parse(msgStr)
+    console.log(msgStr)
   })
 
   ws.on('close', function () {
