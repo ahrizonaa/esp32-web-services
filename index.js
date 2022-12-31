@@ -3,6 +3,11 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const { MongoClient, ServerApiVersion } = require('mongodb');
+
+const mongo_uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@esp32sensordata.wqwz88a.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(mongo_uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
 const { createServer } = require('http');
 
 const WebSocket = require('ws');
@@ -14,11 +19,29 @@ app.use(cors())
 const server = createServer(app);
 const wss = new WebSocket.Server({ server });
 
-wss.on('connection', function (ws) {
+wss.on('connection', async function (ws) {
   console.log('new conneciton established')
-  ws.on('message', function(msgStr) {
+  ws.on('message', async function(msgStr) {
     //const msg = JSON.parse(msgStr)
     console.log(msgStr.toString())
+
+    client.connect(async function(err) {
+      if (err) {
+        console.log(err)
+        client.close()
+        return
+      } else {
+        client.db("ESP32SensorData").collection("WebSocketDataFeed").insertOne({ datapoint: msgStr.toString(), source: 'ESP32', net_protocol: 'WebSocket', timestamp: new Date(Date.now()).toISOString() }, function(err, res) {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log('inserted to mongodb')
+          }
+          client.close()
+        })
+      }
+
+    });
   })
 
   ws.on('close', function () {
