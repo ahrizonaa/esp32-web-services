@@ -22,8 +22,8 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', async function (ws) {
   console.log('new conneciton established')
   ws.on('message', async function(msgStr) {
-    let payload = JSON.parse(msgStr.toString())
     console.log(msgStr.toString())
+    let payload = JSON.parse(msgStr.toString())
     payload['timestamp'] = new Date(Date.now()).toISOString()
     payload['net_protocol'] = 'WebSocket'
 
