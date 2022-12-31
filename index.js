@@ -22,8 +22,9 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', async function (ws) {
   console.log('new conneciton established')
   ws.on('message', async function(msgStr) {
-    //const msg = JSON.parse(msgStr)
+    let payload = JSON.parse(msgStr.toString())
     console.log(msgStr.toString())
+    payload['timestamp'] = new Date(Date.now()).toISOString()
 
     client.connect(async function(err) {
       if (err) {
@@ -31,7 +32,7 @@ wss.on('connection', async function (ws) {
         client.close()
         return
       } else {
-        client.db("ESP32SensorData").collection("WebSocketDataFeed").insertOne({ datapoint: msgStr.toString(), source: 'ESP32', net_protocol: 'WebSocket', timestamp: new Date(Date.now()).toISOString() }, function(err, res) {
+        client.db("ESP32SensorData").collection("WebSocketDataFeed").insertOne(payload, function(err, res) {
           if (err) {
             console.log(err)
           } else {
