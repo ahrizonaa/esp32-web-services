@@ -24,8 +24,8 @@ wss.on('connection', async function (ws) {
   ws.on('message', async function(msgStr) {
     console.log(msgStr.toString())
     let payload = JSON.parse(msgStr.toString())
-    payload['timestamp'] = new Date(Date.now()).toISOString()
-    payload['net_protocol'] = 'WebSocket'
+    payload['utc'] = new Date(Date.now()).toISOString()
+    payload['protocol'] = 'wss'
 
     client.connect(async function(err) {
       if (err) {
