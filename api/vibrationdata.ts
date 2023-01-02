@@ -1,14 +1,5 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 
-const mongo_uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@esp32sensordata.wqwz88a.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(mongo_uri, { serverApi: ServerApiVersion.v1 });
-
-client.connect(function(err) {
-  if (err) {
-    console.log(err)
-  }
-})
-
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true)
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -27,6 +18,14 @@ const allowCors = fn => async (req, res) => {
 }
 
 export default allowCors(async function handler(request, response) {
+  const mongo_uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@esp32sensordata.wqwz88a.mongodb.net/?retryWrites=true&w=majority`;
+  const client = new MongoClient(mongo_uri, { serverApi: ServerApiVersion.v1 });
+
+  client.connect(function(err) {
+    if (err) {
+      console.log(err)
+    }
+  })
   let records = await client.db('ESP32SensorData').collection('WebSocketDataFeed').find({}).toArray();
   return response.status(200).json(records);
 })
