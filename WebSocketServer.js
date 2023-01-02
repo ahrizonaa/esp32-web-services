@@ -21,8 +21,7 @@ const WebSocket = require('ws');
 const app = express();
 
 app.use(cors())
-//app.use(express.static(path.join(__dirname, '/public')));
-
+ 
 const server = createServer(app);
 const wss = new WebSocket.Server({ server });
 
