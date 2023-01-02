@@ -8,11 +8,12 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const mongo_uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@esp32sensordata.wqwz88a.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(mongo_uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-client.connect(function(err) {
-  if (err) {
-    console.log(err)
-  }
-})
+try {
+  await client.connect()
+} catch(e) {
+  console.log(e)
+}
+
 
 const { createServer } = require('http');
 
@@ -32,11 +33,11 @@ wss.on('connection', async function (ws) {
     payload['utc'] = new Date(Date.now()).toISOString()
     payload['protocol'] = 'wss'
 
-    client.db("ESP32SensorData").collection("WebSocketDataFeed").insertOne(payload, function(err, res) {
-      if (err) {
-        console.log(err)
-      }
-    })
+    try {
+      await client.db("ESP32SensorData").collection("WebSocketDataFeed").insertOne(payload)
+    } catch (e) {
+      console.log(e)
+    }
   })
 
   ws.on('close', function () {
