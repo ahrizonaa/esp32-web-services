@@ -19,6 +19,7 @@ const { createServer } = require('http');
 const WebSocket = require('ws');
 
 const app = express();
+
 app.use(cors())
 //app.use(express.static(path.join(__dirname, '/public')));
 
@@ -28,7 +29,6 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', async function (ws) {
   console.log('new conneciton established')
   ws.on('message', async function(msgStr) {
-    console.log(msgStr.toString())
     let payload = JSON.parse(msgStr.toString())
     payload['utc'] = new Date(Date.now()).toISOString()
     payload['protocol'] = 'wss'
